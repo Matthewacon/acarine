@@ -87,8 +87,9 @@ if(${ACARINE_DEBUG})
 else()
  #Production compiler flags
  list(
+  APPEND ACARINE_COMPILE_FLAGS
   -O3
-  -flto
+  #-flto
  )
 
  #Production linker flags
@@ -137,7 +138,8 @@ if(${ACARINE_COVERAGE})
  )
 endif()
 
-#TODO Declare all dependencies
+#Dependencies
+#Note: acarine does not currently have any dependencies
 
 #Configure library build
 file(GLOB_RECURSE ACARINE_SRC "src/**.c" "src/**.cpp")
@@ -149,7 +151,10 @@ else()
 endif()
 
 #Fetch all latent dependencies and get list of link targets
-fetch_latent_dependencies(TARGETS_VAR ACARINE_LINK_TARGETS)
+fetch_latent_dependencies(
+ TARGETS_VAR ACARINE_LINK_TARGETS
+ NO_FAIL TRUE
+)
 
 #Disable public scope options if acarine is not the top-level project
 if(${ACARINE_TOP_LEVEL})
@@ -159,7 +164,7 @@ else()
 endif()
 
 target_include_directories(acarine PUBLIC include)
-target_compilation_options(acarine ${ACARINE_OPTION_SCOPE} ${ACARINE_COMPILE_FLAGS})
+target_compile_options(acarine ${ACARINE_OPTION_SCOPE} ${ACARINE_COMPILE_FLAGS})
 target_link_options(acarine ${ACARINE_OPTION_SCOPE} ${ACARINE_LINK_FLAGS})
 
 #Include tests in build if testing or benchmarking
